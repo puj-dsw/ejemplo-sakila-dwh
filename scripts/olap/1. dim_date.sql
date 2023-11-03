@@ -1,3 +1,6 @@
+-- ETL, extraction-transformation-load
+
+-- 3. cargar los datos en la dimensión
 INSERT INTO sakila_datawh.dim_date (
     date_key,
     date_value,
@@ -7,6 +10,12 @@ INSERT INTO sakila_datawh.dim_date (
     year4,
     year_month_number
 )
+-- 1. extraer las fechas de todos los alquileres
+WITH fechas AS (
+    SELECT distinct DATE(rental_date) as fecha
+    FROM sakila.rental 
+)
+-- 2. transformar la fecha en todas las columnas que necesito
 SELECT
     TO_DAYS(fecha) AS date_key,
     fecha,
@@ -15,7 +24,4 @@ SELECT
     MONTHNAME(fecha) AS month_name,
     YEAR(fecha) AS year4,
     DATE_FORMAT(fecha, '%Y-%m') AS  year_month_number
-FROM (
-    SELECT distinct DATE(rental_date) as fecha
-    FROM sakila.rental 
-) AS fechas
+FROM fechas

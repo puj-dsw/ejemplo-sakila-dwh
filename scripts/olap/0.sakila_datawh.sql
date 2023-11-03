@@ -8,12 +8,31 @@ CREATE DATABASE IF NOT EXISTS sakila_datawh;
 USE sakila_datawh;
 
 
+-- Dimension Tiempo
+-- Tabla dim_date
+CREATE TABLE IF NOT EXISTS dim_date (
+  date_key INT(8) NOT NULL,              -- llave surrogada, se genera con TO_DAYS(fecha)
+  date_value DATE NOT NULL,              -- la fecha
+
+  date_medium CHAR(16) NOT NULL,
+  month_number TINYINT(3) NOT NULL,
+  month_name CHAR(12) NOT NULL,
+  year4 SMALLINT(5) NOT NULL,
+  year_month_number CHAR(7) NOT NULL,
+  
+  PRIMARY KEY (date_key),
+  UNIQUE INDEX date (date_value) VISIBLE,
+  UNIQUE INDEX date_value (`date_value` ASC) VISIBLE
+);
+
+
 -- Dimensión Cliente
 -- Tabla dim_customer
 CREATE TABLE IF NOT EXISTS dim_customer (
+
   customer_key INT(8) NOT NULL AUTO_INCREMENT,
-  customer_last_update DATETIME NOT NULL DEFAULT (CURRENT_DATE),
   customer_id INT(8) NULL DEFAULT NULL,
+
   customer_first_name VARCHAR(45) NULL DEFAULT NULL,
   customer_last_name VARCHAR(45) NULL DEFAULT NULL,
   customer_active CHAR(3) NULL DEFAULT NULL,
@@ -21,34 +40,24 @@ CREATE TABLE IF NOT EXISTS dim_customer (
   customer_district VARCHAR(20) NULL DEFAULT NULL,
   customer_city VARCHAR(50) NULL DEFAULT NULL,
   customer_country VARCHAR(50) NULL DEFAULT NULL,
+
+  customer_last_update DATETIME NOT NULL DEFAULT (CURRENT_DATE),
   customer_valid_from DATE NULL DEFAULT NULL,
   customer_valid_through DATE NULL DEFAULT NULL,
+
   PRIMARY KEY (customer_key),
   INDEX customer_id (customer_id) VISIBLE
 );
 
 
--- Dimension Tiempo
--- Tabla dim_date
-CREATE TABLE IF NOT EXISTS dim_date (
-  date_key INT(8) NOT NULL,
-  date_value DATE NOT NULL,
-  date_medium CHAR(16) NOT NULL,
-  month_number TINYINT(3) NOT NULL,
-  month_name CHAR(12) NOT NULL,
-  year4 SMALLINT(5) NOT NULL,
-  year_month_number CHAR(7) NOT NULL,
-  PRIMARY KEY (date_key),
-  UNIQUE INDEX date (date_value) VISIBLE,
-  UNIQUE INDEX date_value (`date_value` ASC) VISIBLE
-);
-
 
 -- Dimensión Película
 -- Tabla dim_film
 CREATE TABLE IF NOT EXISTS dim_film (
+
   film_key INT(8) NOT NULL AUTO_INCREMENT,
-  film_last_update DATETIME NOT NULL DEFAULT (CURRENT_DATE),
+
+  film_id INT(11) NOT NULL,
   film_title VARCHAR(64) NOT NULL,
   film_description TEXT NOT NULL,
   film_release_year SMALLINT(5) NOT NULL,
@@ -58,8 +67,10 @@ CREATE TABLE IF NOT EXISTS dim_film (
   film_duration INT(8) NULL DEFAULT NULL,
   film_replacement_cost DECIMAL(5,2) NULL DEFAULT NULL,
   film_rating_text VARCHAR(30) NULL DEFAULT NULL,
-  film_id INT(11) NOT NULL,
   film_category CHAR(30) NULL DEFAULT NULL,
+
+  film_last_update DATETIME NOT NULL DEFAULT (CURRENT_DATE),
+
   PRIMARY KEY (film_key)
 );
 

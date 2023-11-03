@@ -7,15 +7,7 @@ INSERT INTO fact_rental (
     count_returns,
     count_rentals
 )
-SELECT 
-    customer_key,
-    staff_key,
-    film_key,
-    store_key,
-    date_key,
-    SUM(count_returns),
-    SUM(count_rentals)
-FROM (
+WITH datos AS (
     SELECT 
         dim_customer.customer_key,
         dim_staff.staff_key,
@@ -35,7 +27,16 @@ FROM (
             ON inventory.film_id = dim_film.film_id
         LEFT JOIN sakila_datawh.dim_store as dim_store
             ON inventory.store_id = dim_store.store_id
-    ) AS datos
+)
+SELECT 
+    customer_key,
+    staff_key,
+    film_key,
+    store_key,
+    date_key,
+    SUM(count_returns),
+    SUM(count_rentals)
+FROM datos
 GROUP BY 
     customer_key,
     staff_key,
